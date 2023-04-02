@@ -1,4 +1,8 @@
 package org.lboot.s3.api;
+
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +32,15 @@ public interface BucketApi {
      * 列举桶名称
      * @return
      */
-    default List<String> listBuckets(){
+    default List<String> listBucketsName(){
         return new ArrayList<>();
     }
+
+    /**
+     * 列举桶信息
+     * @return
+     */
+    List<Bucket> listBuckets();
 
     /**
      * 删除桶
@@ -41,30 +51,60 @@ public interface BucketApi {
         return false;
     };
 
-    /**
-     * 设置桶权限
-     */
-    default void setBucketACL(String bucketName){
 
-    }
+    //--------bucket-acl--------------//
+
+    /**
+     * 设置桶私有 -
+     * @param bucketName
+     * @return
+     */
+    boolean setBucketPrivate(String bucketName);
+
+    /**
+     * 设置桶公开 rw
+     * @param bucketName
+     * @return
+     */
+    boolean setBucketPublic(String bucketName);
+
+    /**
+     * 设置桶公开读 私有写 r
+     * @param bucketName
+     * @return
+     */
+    boolean setBucketPublicRead(String bucketName);
 
     /**
      * 获取桶权限
      * @param bucketName
      * @return
      */
+    @Deprecated
     default String getBucketACL(String bucketName){
         return null;
     }
 
+    //----非重写API----//
 
     /**
-     * 判断存储桶是否存在
+     * [!Override]判断存储桶是否存在
      * @param bucketName
      * @return
      */
     default boolean isExistBucket(String bucketName){
         return doesBucketExist(bucketName);
     }
+
+    /**
+     * [!Override]删除桶
+     * @param bucketName
+     * @return
+     */
+    default boolean removeBucket(String bucketName) {
+        return deleteBucket(bucketName);
+    }
+
+
 
 }

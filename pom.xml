@@ -47,6 +47,11 @@
             <artifactId>hutool-core</artifactId>
             <version>5.8.10</version>
         </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-setting</artifactId>
+            <version>5.8.10</version>
+        </dependency>
         <!--s3-->
         <dependency>
             <groupId>com.amazonaws</groupId>

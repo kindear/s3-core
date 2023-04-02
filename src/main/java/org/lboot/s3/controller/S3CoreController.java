@@ -23,7 +23,11 @@ public class S3CoreController {
     @PostMapping("bucket/{bucketName}")
     @ApiOperation(value = "桶创建")
     public Object bucketCreate(@PathVariable("bucketName") String bucketName){
-        return null;
+        s3Client.createBucket(bucketName);
+        return "创建成功";
     }
+
+
+
 
 }
