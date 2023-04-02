@@ -13,13 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class S3CoreController {
     S3Client s3Client;
 
-    @GetMapping("exist/{bucket}")
-    @ApiOperation(value = "桶查询")
-    public Object isExist(@PathVariable("bucket") String bucket){
-
-        return s3Client.doesBucketExist(bucket);
-    }
-
     @PostMapping("bucket/{bucketName}")
     @ApiOperation(value = "桶创建")
     public Object bucketCreate(@PathVariable("bucketName") String bucketName){
@@ -27,7 +20,19 @@ public class S3CoreController {
         return "创建成功";
     }
 
+    @GetMapping("exist/{bucket}")
+    @ApiOperation(value = "桶查询")
+    public Object isExist(@PathVariable("bucket") String bucket){
 
+        return s3Client.doesBucketExist(bucket);
+    }
+
+    @DeleteMapping("bucket/{bucketName}")
+    @ApiOperation(value = "桶删除",notes = "")
+    public Object bucketDelete(@PathVariable("bucketName") String bucketName){
+        s3Client.deleteBucket(bucketName);
+        return "删除成功";
+    }
 
 
 }

@@ -76,10 +76,6 @@ public interface ObjectApi {
     ObjectListing listObjects(String bucketName);
 
 
-    
-
-
-
     /**
      * [!Override]获取对象数据流
      * @param bucketName
@@ -197,8 +193,6 @@ public interface ObjectApi {
         deleteObject(sourceBucket, sourceObject);
         return true;
     }
-
-
 
 
 }
