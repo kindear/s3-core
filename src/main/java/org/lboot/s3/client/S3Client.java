@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author kindear@RequiredArgsConstructor
+ * @author kindear
  * S3 协议存储相关操作
  */
 @Slf4j
@@ -96,24 +96,6 @@ public class S3Client implements BucketApi, ObjectApi {
         this.host = selfProps.getStr("oss.host",props.getHost());
         this.bucket = selfProps.getStr("oss.bucket",props.getBucketName());
         reload();
-//        String ext = FileNameUtil.extName(settingPath);
-//        if (ext.equals("properties")){
-//            Props selfProps = new Props(settingPath);
-//            this.endpoint = selfProps.getStr("oss.endpoint",props.getEndpoint());
-//            this.accessKey = selfProps.getStr("oss.public.key",props.getAccessKey());
-//            this.secretKey = selfProps.getStr("oss.private.key",props.getSecretKey());
-//            this.host = selfProps.getStr("oss.host",props.getHost());
-//            this.bucket = selfProps.getStr("oss.bucket",props.getBucketName());
-//            reload();
-//        }else if (ext.equals("setting")){
-//            Setting selfProps = new Setting(settingPath);
-//            this.endpoint = selfProps.getStr("oss.endpoint",props.getEndpoint());
-//            this.accessKey = selfProps.getStr("oss.public.key",props.getAccessKey());
-//            this.secretKey = selfProps.getStr("oss.private.key",props.getSecretKey());
-//            this.host = selfProps.getStr("oss.host",props.getHost());
-//            this.bucket = selfProps.getStr("oss.bucket",props.getBucketName());
-//            reload();
-//        }
     }
 
     @SneakyThrows
@@ -130,7 +112,7 @@ public class S3Client implements BucketApi, ObjectApi {
         reload();
     }
 
-    // 初始化构建 AWSClient\
+    // 初始化构建 AWSClient
     @SneakyThrows
     AmazonS3 clientBuild(){
         // 客户端配置，主要是全局的配置信息
