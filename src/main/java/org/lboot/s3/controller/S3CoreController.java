@@ -69,7 +69,7 @@ public class S3CoreController {
 
     @PostMapping("object")
     @ApiOperation(value = "对象新建",notes = "")
-    public Object objectCreate(@RequestBody FileUploadParams params){
+    public Object objectCreate(FileUploadParams params){
         s3Client.putObject(params.getBucketName(), params.getFileName(), params.getFile());
         return "上传成功";
     }
