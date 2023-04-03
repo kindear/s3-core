@@ -58,6 +58,15 @@ public interface ObjectApi {
     ObjectMetadata getObjectMetadata(String bucketName, String objectName);
 
     /**
+     * 生成私有对象访问链接
+     * @param bucketName
+     * @param objectName
+     * @param expires
+     * @return
+     */
+    String getObjectURL(String bucketName, String objectName, Integer expires);
+
+    /**
      * object 复制
      * @param sourceBucket
      * @param sourceObject
@@ -74,6 +83,13 @@ public interface ObjectApi {
      * @return
      */
     ObjectListing listObjects(String bucketName);
+
+    /**
+     * 列举 objects
+     * @param request
+     * @return
+     */
+    ObjectListing listObjects(ListObjectsRequest request);
 
 
     /**
@@ -180,6 +196,7 @@ public interface ObjectApi {
      * @param targetObject
      * @return
      */
+    @SneakyThrows
     default boolean moveObject(String sourceBucket, String sourceObject, String targetBucket, String targetObject){
         if (!doesObjectExist(sourceBucket, sourceObject)){
             return false;
@@ -194,5 +211,30 @@ public interface ObjectApi {
         return true;
     }
 
+    /**
+     * [!Override]生成可访问地址
+     * @param bucketName
+     * @param objectName
+     * @param expires
+     * @return
+     */
+    @SneakyThrows
+    default String getObjectUrl(String bucketName, String objectName, Integer expires){
+        return getObjectURL(bucketName, objectName, expires);
+    }
+
+    /**
+     * [!Override] 根据前缀获取
+     * 根据前缀获取objects
+     * @param bucketName
+     * @param prefix
+     * @return
+     */
+    default ObjectListing getObjectsByPrefix(String bucketName, String prefix){
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+        listObjectsRequest.setBucketName(bucketName);
+        listObjectsRequest.setPrefix(prefix);
+        return listObjects(listObjectsRequest);
+    }
 
 }

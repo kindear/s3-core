@@ -26,6 +26,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -281,5 +285,24 @@ public class S3Client implements BucketApi, ObjectApi {
     public ObjectListing listObjects(String bucketName) {
         AmazonS3 client = client();
         return client.listObjects(bucketName);
+    }
+
+    @Override
+    @SneakyThrows
+    public ObjectListing listObjects(ListObjectsRequest request) {
+        AmazonS3 client = client();
+        return client.listObjects(request);
+    }
+
+    @Override
+    @SneakyThrows
+    public String getObjectURL(String bucketName, String objectName, Integer expires) {
+        AmazonS3 client = client();
+        Date date = new Date();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH, expires);
+        URL url = client.generatePresignedUrl(bucketName, objectName, calendar.getTime());
+        return url.toString();
     }
 }

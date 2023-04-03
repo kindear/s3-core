@@ -26,6 +26,11 @@ public class S3CoreController {
         return "创建成功";
     }
 
+    /**
+     * 不支持: minio
+     * @param bucketName
+     * @return
+     */
     @PostMapping("bucket/{bucketName}/private")
     @ApiOperation(value = "桶私有")
     public Object bucketPrivate(@PathVariable("bucketName") String bucketName){
@@ -33,6 +38,11 @@ public class S3CoreController {
         return "修改成功";
     }
 
+    /**
+     * 不支持: minio
+     * @param bucketName
+     * @return
+     */
     @PostMapping("bucket/{bucketName}/public")
     @ApiOperation(value = "桶公开")
     public Object bucketPublic(@PathVariable("bucketName") String bucketName){
@@ -51,7 +61,7 @@ public class S3CoreController {
     @ApiOperation(value = "桶权限")
     public Object bucketInfo(@PathVariable("bucketName") String bucketName){
         AccessControlList ctl = s3Client.getBucketACL(bucketName);
-        return BeanUtil.beanToMap(ctl);
+        return ctl;
     }
 
     @GetMapping("buckets")
@@ -79,6 +89,12 @@ public class S3CoreController {
     @ApiOperation(value = "对象信息")
     public Object objectInfo(@PathVariable("bucketName") String bucketName, @PathVariable("objectName") String objectName){
         return s3Client.getObjectInfo(bucketName, objectName);
+    }
+
+    @GetMapping("object/{bucketName}/{objectName}/url")
+    @ApiOperation(value = "对象访问地址")
+    public Object objectUrl(@PathVariable("bucketName") String bucketName, @PathVariable("objectName") String objectName){
+        return s3Client.getObjectURL(bucketName, objectName, 3);
     }
 
     @GetMapping("object/{bucketName}/{objectName}")
