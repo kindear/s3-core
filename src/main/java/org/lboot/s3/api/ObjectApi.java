@@ -3,10 +3,19 @@ package org.lboot.s3.api;
 import cn.hutool.core.io.FileUtil;
 import com.amazonaws.services.s3.model.*;
 import lombok.SneakyThrows;
+import org.lboot.s3.params.FileUploadParams;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author kindear
@@ -237,4 +246,47 @@ public interface ObjectApi {
         return listObjects(listObjectsRequest);
     }
 
+    /**
+     * 文件下载
+     * @param in
+     * @param request
+     * @param params
+     * @return
+     */
+    default ResponseEntity<byte[]> downloadMethod(InputStream in, HttpServletRequest request, String params){
+
+        HttpHeaders heads = new HttpHeaders();
+        heads.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream; charset=utf-8");
+        String fileName = params;
+        try {
+            if (request.getHeader("User-Agent").toLowerCase().indexOf("firefox") > 0) {
+                // firefox浏览器
+                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+            } else if (request.getHeader("User-Agent").toUpperCase().indexOf("MSIE") > 0) {
+                // IE浏览器
+                fileName = URLEncoder.encode(fileName, "UTF-8");
+            } else if (request.getHeader("User-Agent").toUpperCase().indexOf("EDGE") > 0) {
+                // WIN10浏览器
+                fileName = URLEncoder.encode(fileName, "UTF-8");
+            } else if (request.getHeader("User-Agent").toUpperCase().indexOf("CHROME") > 0) {
+                // 谷歌
+                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+            } else {
+                //万能乱码问题解决
+                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+            }
+        } catch (UnsupportedEncodingException e) {
+            // log.error("", e);
+        }
+        heads.add(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + fileName);
+        try {
+            // 输入流转换为字节流
+            byte[] buffer = FileCopyUtils.copyToByteArray(in);
+            //file.delete();
+            return new ResponseEntity<>(buffer, heads, HttpStatus.OK);
+        } catch (Exception e) {
+            // log.error("", e);
+        }
+        return null;
+    }
 }

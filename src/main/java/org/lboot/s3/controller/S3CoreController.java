@@ -1,6 +1,6 @@
 package org.lboot.s3.controller;
 
-import cn.hutool.core.bean.BeanUtil;
+
 import com.amazonaws.services.s3.model.AccessControlList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -8,8 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.lboot.s3.client.S3Client;
 import org.lboot.s3.params.FileUploadParams;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 
 @RestController
@@ -100,17 +102,20 @@ public class S3CoreController {
     @GetMapping("object/{bucketName}/{objectName}")
     @ApiOperation(value = "对象下载")
     @SneakyThrows
-    public Object objectDownload(@PathVariable("bucketName") String bucketName, @PathVariable("objectName") String objectName){
+    public ResponseEntity<byte[]> objectDownload(@PathVariable("bucketName") String bucketName, HttpServletRequest request, @PathVariable("objectName") String objectName){
         InputStream stream = s3Client.getObjectStream(bucketName,objectName);
-        long size = stream.available();
-        return "文件大小:"+size;
+
+        return s3Client.downloadMethod(stream,request,bucketName);
     }
 
     @DeleteMapping("object/{bucketName}/{objectName}")
     @ApiOperation(value = "对象删除",notes = "")
     public Object objectDelete(@PathVariable("bucketName") String bucketName, @PathVariable("objectName") String objectName){
-        s3Client.deleteObject(bucketName, objectName);
-        return "删除成功";
+        if (s3Client.doesObjectExist(bucketName, objectName)){
+            s3Client.deleteObject(bucketName, objectName);
+            return true;
+        }
+        return "桶或对象不存在";
     }
 
     @GetMapping("bucket/{bucketName}/objects")
