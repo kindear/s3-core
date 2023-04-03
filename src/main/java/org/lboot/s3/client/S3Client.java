@@ -165,6 +165,12 @@ public class S3Client implements BucketApi, ObjectApi {
     }
 
     @Override
+    public AccessControlList getBucketACL(String bucketName) {
+        AmazonS3 client = client();
+        return client.getBucketAcl(bucketName);
+    }
+
+    @Override
     @SneakyThrows
     public boolean doesBucketExist(String bucketName) {
         AmazonS3 client = client();

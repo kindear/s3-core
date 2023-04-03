@@ -1,5 +1,6 @@
 package org.lboot.s3.api;
 
+import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 
@@ -80,10 +81,7 @@ public interface BucketApi {
      * @param bucketName
      * @return
      */
-    @Deprecated
-    default String getBucketACL(String bucketName){
-        return null;
-    }
+    AccessControlList getBucketACL(String bucketName);
 
     //----非重写API----//
 
