@@ -3,7 +3,6 @@ package org.lboot.s3.api;
 import cn.hutool.core.io.FileUtil;
 import com.amazonaws.services.s3.model.*;
 import lombok.SneakyThrows;
-import org.lboot.s3.params.FileUploadParams;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

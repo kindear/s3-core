@@ -34,12 +34,11 @@
             <artifactId>spring-boot-starter-undertow</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--接口文档依赖-->
+        <!--swagger models-->
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
-            <version>3.0.3</version>
-            <optional>true</optional>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>1.5.22</version>
         </dependency>
         <!--hu-tool-->
         <dependency>
