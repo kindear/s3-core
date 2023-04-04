@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import javassist.NotFoundException;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -259,6 +260,10 @@ public class S3Client implements BucketApi, ObjectApi {
     @SneakyThrows
     public CopyObjectResult copyObject(String sourceBucket, String sourceObject, String targetBucket, String targetObject) {
         AmazonS3 client = client();
+        if (!isExistObject(sourceObject, sourceObject)){
+            throw new NotFoundException("No Object");
+        }
+        createBucket(targetBucket);
         return client.copyObject(sourceBucket, sourceObject, targetBucket, targetObject);
     }
 
