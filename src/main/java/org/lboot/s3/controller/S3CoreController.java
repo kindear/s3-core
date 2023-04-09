@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.lboot.s3.client.S3Client;
 import org.lboot.s3.params.FileUploadParams;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +20,29 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-
+@Slf4j
 @RestController
 @RequestMapping("s3")
 @AllArgsConstructor
 @Api(tags = "方法测试")
 public class S3CoreController {
     S3Client s3Client;
+
+
+    @PostMapping("switch/{oss}")
+    @ApiOperation(value = "切换存储")
+    public Object switchOss(@PathVariable("oss") String oss){
+        log.info(oss);
+        if (oss.equals("qiniu")){
+            s3Client.reload("qiniu.properties");
+            return "重置成功";
+        }else if(oss.equals("minio")){
+            s3Client.reload("minio.properties");
+            return "重置成功";
+        }
+        return "未找到!";
+    }
+
 
     @PostMapping("bucket/{bucketName}")
     @ApiOperation(value = "桶创建")

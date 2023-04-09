@@ -1,8 +1,6 @@
 package org.lboot.s3.client;
 
-import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.lang.Validator;
-import cn.hutool.setting.Setting;
 import cn.hutool.setting.dialect.Props;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
@@ -14,6 +12,9 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import javassist.NotFoundException;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -32,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +46,9 @@ import java.util.stream.Collectors;
 public class S3Client implements BucketApi, ObjectApi {
     @Autowired
     OssProperties props;
+
+    // https://blog.csdn.net/qq_18300037/article/details/123795776
+    private static final ConcurrentHashMap<String, AmazonS3> clients = new ConcurrentHashMap<>();
 
     // 服务终端地址
     private String endpoint;
@@ -69,33 +74,39 @@ public class S3Client implements BucketApi, ObjectApi {
     // Bean 初始化构建方法
     @PostConstruct
     public void init(){
-        this.endpoint = props.getEndpoint();
-        this.accessKey = props.getAccessKey();
-        this.secretKey = props.getSecretKey();
-        this.host = props.getHost();
-        this.bucket = props.getBucketName();
+        if (Validator.isNotEmpty(props)){
+            this.endpoint = props.getEndpoint();
+            this.accessKey = props.getAccessKey();
+            this.secretKey = props.getSecretKey();
+            this.host = props.getHost();
+            this.bucket = props.getBucketName();
+        }else {
+            log.warn("S3Client Inject failed");
+        }
+
     }
     // Bean 执行过程中重载方法 -> 例如更换 endPoint、密钥等,需要在执行setXXX 后执行 reload
     @SneakyThrows
     public void reload(){
-        this.amazonS3 = null;
+        String clientKey = clientHash();
+        this.amazonS3 = clients.get(clientKey);
     }
 
-    // 读取OSS配置文件路径 -> reload
 
+    // 读取OSS配置文件路径 -> reload
     /**
      * 通过配置文件重载
-     * @param settingPath
+     * @param propsPath
      */
     @SneakyThrows
-    public void reload(String settingPath){
+    public void reload(String propsPath){
         // 获取后缀
-        Setting selfProps = new Setting(settingPath);
-        this.endpoint = selfProps.getStr("oss.endpoint",props.getEndpoint());
-        this.accessKey = selfProps.getStr("oss.public.key",props.getAccessKey());
-        this.secretKey = selfProps.getStr("oss.private.key",props.getSecretKey());
-        this.host = selfProps.getStr("oss.host",props.getHost());
-        this.bucket = selfProps.getStr("oss.bucket",props.getBucketName());
+        Props selfProps = new Props(propsPath);
+        this.endpoint = selfProps.getProperty("oss.endpoint");
+        this.accessKey = selfProps.getProperty("oss.public.key");
+        this.secretKey = selfProps.getProperty("oss.private.key");
+        this.host = selfProps.getProperty("oss.host");
+        this.bucket = selfProps.getProperty("oss.bucket");
         reload();
     }
 
@@ -113,9 +124,29 @@ public class S3Client implements BucketApi, ObjectApi {
         reload();
     }
 
+    @SneakyThrows
+    public String clientHash(){
+
+        String calcStr = this.endpoint +
+                this.accessKey +
+                this.secretKey +
+                this.host;
+        HashFunction hf = Hashing.sha256();
+        HashCode hc = hf.hashBytes(calcStr.getBytes());
+
+        // Get the first 32 or 64 bytes of the hash code as a string
+        int length = 32; // or 64
+        String hashString = hc.toString().substring(0, length);
+        //log.info("哈希值为{}",hashString);
+        return hashString;
+
+    }
+
     // 初始化构建 AWSClient
     @SneakyThrows
     AmazonS3 clientBuild(){
+        // 是否执行获取
+        log.info("\n执行客户端构建");
         // 客户端配置，主要是全局的配置信息
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setMaxConnections(this.maxConnection);
@@ -129,6 +160,9 @@ public class S3Client implements BucketApi, ObjectApi {
         this.amazonS3 = AmazonS3Client.builder().withEndpointConfiguration(endpointConfiguration)
                 .withClientConfiguration(clientConfiguration).withCredentials(awsCredentialsProvider)
                 .disableChunkedEncoding().withPathStyleAccessEnabled(this.enablePath).build();
+        //存入hash
+        String clientKey = clientHash();
+        clients.put(clientKey,this.amazonS3);
         return this.amazonS3;
     }
     // 获取已构建客户端

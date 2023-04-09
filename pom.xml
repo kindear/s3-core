@@ -50,13 +50,7 @@
         <!--hu-tool-->
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-core</artifactId>
-            <version>5.8.10</version>
-        </dependency>
-        <!--hu-tool-setting-->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-setting</artifactId>
+            <artifactId>hutool-all</artifactId>
             <version>5.8.10</version>
         </dependency>
         <!--s3-->
