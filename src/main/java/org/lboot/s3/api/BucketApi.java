@@ -102,7 +102,4 @@ public interface BucketApi {
     default boolean removeBucket(String bucketName) {
         return deleteBucket(bucketName);
     }
-
-
-
 }

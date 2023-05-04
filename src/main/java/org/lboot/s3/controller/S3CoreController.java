@@ -42,7 +42,7 @@ public class S3CoreController {
         }
         return "未找到!";
     }
-
+    
 
     @PostMapping("bucket/{bucketName}")
     @ApiOperation(value = "桶创建")
@@ -50,9 +50,8 @@ public class S3CoreController {
         s3Client.createBucket(bucketName);
         return "创建成功";
     }
-
     /**
-     * 不支持: minio
+     * 不支持: minio qiniu
      * @param bucketName
      * @return
      */
@@ -64,7 +63,7 @@ public class S3CoreController {
     }
 
     /**
-     * 不支持: minio
+     * 不支持: minio qiniu
      * @param bucketName
      * @return
      */

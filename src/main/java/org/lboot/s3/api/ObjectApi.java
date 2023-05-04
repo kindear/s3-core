@@ -3,18 +3,10 @@ package org.lboot.s3.api;
 import cn.hutool.core.io.FileUtil;
 import com.amazonaws.services.s3.model.*;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author kindear
@@ -124,7 +116,6 @@ public interface ObjectApi {
      */
     @SneakyThrows
     default void putObject(String bucketName, String objectName, InputStream stream){
-
         putObject(bucketName, objectName, stream, stream.available(), "application/octet-stream");
     }
 
