@@ -15,7 +15,11 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @Configuration
 public class OssProperties {
-
+    /**
+     * 服务API 模式
+     */
+    @Value("${oss.mode}")
+    private String mode;
     /**
      * 服务API访问入口
      */
