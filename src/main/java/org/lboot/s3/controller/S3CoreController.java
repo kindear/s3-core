@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.lboot.s3.client.S3Client;
 import org.lboot.s3.params.FileUploadParams;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("s3")
 @AllArgsConstructor
 @Api(tags = "方法测试")
+@ConditionalOnProperty(prefix = "s3.api",name = "enable",havingValue = "true")
 public class S3CoreController {
     S3Client s3Client;
 
