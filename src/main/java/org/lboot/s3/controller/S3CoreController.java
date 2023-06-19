@@ -1,7 +1,6 @@
 package org.lboot.s3.controller;
 
 
-import com.amazonaws.services.s3.model.AccessControlList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -53,8 +52,7 @@ public class S3CoreController {
     }
     /**
      * 不支持: minio qiniu
-     * @param bucketName
-     * @return
+     * @param bucketName 存储桶名称
      */
     @PostMapping("bucket/{bucketName}/private")
     @ApiOperation(value = "桶私有")
@@ -65,8 +63,7 @@ public class S3CoreController {
 
     /**
      * 不支持: minio qiniu
-     * @param bucketName
-     * @return
+     * @param bucketName 存储桶名
      */
     @PostMapping("bucket/{bucketName}/public")
     @ApiOperation(value = "桶公开")
@@ -85,8 +82,7 @@ public class S3CoreController {
     @GetMapping("bucket/{bucketName}/acl")
     @ApiOperation(value = "桶权限")
     public Object bucketInfo(@PathVariable("bucketName") String bucketName){
-        AccessControlList ctl = s3Client.getBucketACL(bucketName);
-        return ctl;
+        return s3Client.getBucketACL(bucketName);
     }
 
     @GetMapping("buckets")
