@@ -1,6 +1,7 @@
 package org.lboot.s3.config;
 
 import lombok.AllArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -22,6 +23,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class S3CoreKnife4jConfig {
 
     @Bean(value = "s3Api")
+    @ConditionalOnProperty(prefix = "s3.api",name = "enable",havingValue = "true")
     public Docket s3Api() {
         String groupName="S3-API";
         ApiInfo apiInfo = new ApiInfoBuilder()

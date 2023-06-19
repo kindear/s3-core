@@ -28,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 public class S3CoreController {
     S3Client s3Client;
 
-
     @PostMapping("switch/{oss}")
     @ApiOperation(value = "切换存储")
     public Object switchOss(@PathVariable("oss") String oss){
